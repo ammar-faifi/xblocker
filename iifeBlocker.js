@@ -1,9 +1,10 @@
 (async () => {
-  const waitSeconds = 1; // Delay between blocking actions (in seconds)
+  // Delay between blocking actions (in seconds)
+  const waitSeconds = 1;
 
   const userIdsToBlock = [
     "1761800633500188672",
-    "1234567890123456789",
+    "1578074394827554817",
     "9876543210987654321",
   ];
 
@@ -44,15 +45,36 @@
       messageElement.style.opacity = "0";
       setTimeout(() => {
         log.removeChild(messageElement);
-      }, 1000);
+      }, 800);
     }, 4000);
   };
+
+  // Function to get CSRF token
+  function getCsrfToken() {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("ct0="))
+      .split("=")[1];
+  }
 
   // Function to block a single user
   async function blockUser(userId) {
     const url = "https://x.com/i/api/1.1/blocks/create.json";
     const headers = {
-      // copy it from your browser after doing a block request
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0",
+      Accept: "*/*",
+      "Accept-Language": "en-US,en;q=0.5",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "x-twitter-auth-type": "OAuth2Session",
+      "x-csrf-token": getCsrfToken(),
+      "x-twitter-client-language": "en",
+      "x-twitter-active-user": "yes",
+      "Sec-Fetch-Dest": "empty",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
+      authorization:
+        "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
     };
 
     try {
