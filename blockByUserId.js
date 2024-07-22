@@ -1,7 +1,7 @@
 const userIdsToBlock = [
-  '1761800633500188672',
-  '1234567890123456789',
-  '9876543210987654321'
+  "1761800633500188672",
+  "1234567890123456789",
+  "9876543210987654321",
 ];
 
 // Function to block a single user
@@ -18,7 +18,7 @@ async function blockUser(userId) {
       headers: headers,
       body: `user_id=${userId}`,
       credentials: "include",
-      mode: "cors"
+      mode: "cors",
     });
 
     if (!response.ok) {
@@ -39,9 +39,9 @@ async function blockAllUsers() {
   for (const userId of userIdsToBlock) {
     await blockUser(userId);
     // Add a delay between requests to avoid rate limiting
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
-  console.log('Finished blocking all users.');
+  console.log("Finished blocking all users.");
 }
 
 // Run the script
