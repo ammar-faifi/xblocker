@@ -1,0 +1,15 @@
+{
+  "name": "xblocker",
+  "version": "1.0.0",
+  "description": "Get X(Twitter)'s users id",
+  "main": "./getAllUserId.j",
+  "scripts": {
+    "start": "node ./getAllUserId.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ammar Alfaifi",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^22.13.1"
+  }
+}
