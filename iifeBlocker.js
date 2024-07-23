@@ -2,11 +2,20 @@
   // Delay between blocking actions (in seconds)
   const waitSeconds = 1;
 
-  const userIdsToBlock = [
-    "1761800633500188672",
-    "1578074394827554817",
-    "9876543210987654321",
-  ];
+  async function fetchUserIds() {
+    const url = "https://cdn.jsdelivr.net/gh/ammar-faifi/xblocker/d.json";
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.user_ids;
+    } catch (error) {
+      console.error("Error fetching user IDs:", error);
+      return [];
+    }
+  }
 
   const createVisualLog = () => {
     let log = document.getElementById("visual-log");
@@ -94,18 +103,25 @@
       logMessage(`Successfully blocked user ${userId}`);
       return data;
     } catch (error) {
-      logMessage(`Error blocking user ${userId}: ${error.message}`);
+      logMessage(`Error in user ${userId}: ${error.message}`);
       return null;
     }
   }
 
-  // Function to block all users in the array
   async function blockAllUsers() {
+    const userIdsToBlock = await fetchUserIds();
+    if (userIdsToBlock.length === 0) {
+      logMessage("No user IDs to block.");
+      return;
+    }
+
+    logMessage(`Preparing to block ${userIdsToBlock.length} users.`);
+
     for (const userId of userIdsToBlock) {
       await blockUser(userId);
       await new Promise((resolve) => setTimeout(resolve, waitSeconds * 1000));
     }
-    logMessage("Finished blocking all users.");
+    logMessage("Done.");
   }
 
   // Run the script

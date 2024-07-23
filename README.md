@@ -3,7 +3,7 @@
 This works as pasting the script on the console or as a bookmarklet.
 
 
-
+## TODO Disclaimer
 
 
 ## Creadit
