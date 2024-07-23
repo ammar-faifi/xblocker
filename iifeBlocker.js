@@ -2,6 +2,10 @@
   // Delay between blocking actions (in seconds)
   const waitSeconds = 1;
 
+  const mutedAdsPhrases = [
+    "مكيفات سلبت",
+  ];
+
   const userIdsToBlock = [
     "1761800633500188672",
     "1532695315194822656",
@@ -321,13 +325,11 @@
       .split("=")[1];
   }
 
-  // Function to block a single user
-  async function blockUser(userId) {
-    const url = "https://x.com/i/api/1.1/blocks/create.json";
-    const headers = {
+  function buildHeaders() {
+    return {
       "User-Agent":
         "Mozilla/5.0 (Windows NT 10.0; rv:128.0) Gecko/20100101 Firefox/128.0",
-      Accept: "*/*",
+      "Accept": "*/*",
       "Accept-Language": "en-US,en;q=0.5",
       "Content-Type": "application/x-www-form-urlencoded",
       "x-twitter-auth-type": "OAuth2Session",
@@ -340,6 +342,39 @@
       authorization:
         "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
     };
+  }
+ 
+  // Function to mute a single word/phrase
+  async function muteWord(phrase) {
+    url = "https://x.com/i/api/1.1/mutes/keywords/create.json";
+    const headers = buildHeaders();
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: `keyword=${phrase}&mute_surfaces=notifications,home_timeline,tweet_replies&mute_options=exclude_following_accounts&duration=`,
+        credentials: "include",
+        mode: "cors",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      logMessage(`Successfully muted phrase ${phrase}`);
+      return data;
+    } catch (error) {
+      logMessage(`Error muting phrase ${phrase}: ${error.message}`);
+      return null;
+    }
+  }
+
+  // Function to block a single user
+  async function blockUser(userId) {
+    const url = "https://x.com/i/api/1.1/blocks/create.json";
+    const headers = buildHeaders();
 
     try {
       const response = await fetch(url, {
@@ -363,6 +398,14 @@
     }
   }
 
+  // Function to mute all phrases in the array
+  async function muteAllWords() {
+    for (const phrase of mutedAdsPhrases) {
+      await muteWord(phrase);
+      await new Promise((resolve) => setTimeout(resolve, waitSeconds * 1000))
+    }
+  }
+
   // Function to block all users in the array
   async function blockAllUsers() {
     for (const userId of userIdsToBlock) {
@@ -374,4 +417,6 @@
 
   // Run the script
   await blockAllUsers();
+  // muteAllWords();
+  
 })();
